@@ -10,6 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Announcements.business.ModelMapping;
+using Announcements.data.Repositories.Interfaces;
+using Announcements.data.Repositories;
+using Announcements.business.Services.Interfaces;
+using Announcements.business.Services;
 
 namespace Announcements.api
 {
@@ -32,6 +38,17 @@ namespace Announcements.api
             });
 
             services.AddControllersWithViews();
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new ModelMappingProfile());
+            });
+
+            services.AddSingleton(mappingConfig.CreateMapper());
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
+            services.AddScoped<IAnnouncementService, AnnouncementService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -8,8 +8,8 @@ namespace Announcements.data.Repositories.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
-        Task<T> Add(T entity);
-        Task Edit(T entity);
+        Task AddAsync(T entity);
+        Task EditAsync(T entity);
         Task<bool> DeleteAsync(long id);
         Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetDetailsAsync(long id);

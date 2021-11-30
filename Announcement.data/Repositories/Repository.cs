@@ -18,14 +18,13 @@ namespace Announcements.data.Repositories
             _entityDbSet = applicationContext.Set<T>();
         }
 
-        public async Task<T> Add(T entity)
+        public async Task AddAsync(T entity)
         {
             if (entity is null)
             {
                 throw new ArgumentNullException();
             }
-            await _entityDbSet.AddAsync(entity);
-            return entity;
+            await _entityDbSet.AddAsync(entity);            
         }
 
         public async Task<bool> DeleteAsync(long id)
@@ -39,7 +38,7 @@ namespace Announcements.data.Repositories
             return false;
         }
 
-        public async Task Edit(T entity)
+        public async Task EditAsync(T entity)
         {
             _applicationContext.Entry(entity).State = EntityState.Modified;
             await _applicationContext.SaveChangesAsync();
