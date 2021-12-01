@@ -37,7 +37,7 @@ namespace Announcements.business.Services
             return await _unitOfWork.AnnouncementRepository.DeleteAsync(id);
         }
 
-        public async Task EditAnnouncement(AnnouncementDto announcementDto)
+        public async Task EditAnnouncementAsync(AnnouncementDto announcementDto)
         {
             await _unitOfWork.AnnouncementRepository.EditAsync(_mapper.Map<Announcement>(announcementDto));
         }

@@ -7,7 +7,10 @@ namespace Announcements.data.Repositories
     {
         private readonly ApplicationContext _applicationContext;
         private IAnnouncementRepository _announcementRepository;
-
+        public UnitOfWork(ApplicationContext applicationContext)
+        {
+            _applicationContext = applicationContext;
+        }
         public IAnnouncementRepository AnnouncementRepository
         {
             get
