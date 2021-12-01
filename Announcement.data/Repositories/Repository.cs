@@ -33,6 +33,7 @@ namespace Announcements.data.Repositories
             if (found != null)
             {
                 _entityDbSet.Remove(found);
+                await _applicationContext.SaveChangesAsync();
                 return true;
             }
             return false;
