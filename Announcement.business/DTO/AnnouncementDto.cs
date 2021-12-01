@@ -1,14 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 namespace Announcements.business.DTO
 {
     public class AnnouncementDto
     {
-        public long Id { get; set; }
+        [Required(ErrorMessage = "Shouldn't be empty")]
+        [MinLength(2)]
+        [MaxLength(20)]
         public string Name { get; set; }
+
+        [Required(ErrorMessage = "Shouldn't be empty")]
+        [MinLength(5)]
+        [MaxLength(500)]
         public string Description { get; set; }
+
         public DateTime CreationDate { get; set; }
     }
 }

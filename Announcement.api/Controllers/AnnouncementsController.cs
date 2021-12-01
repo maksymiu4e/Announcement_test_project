@@ -1,15 +1,12 @@
 ﻿using Announcements.business.DTO;
 using Announcements.business.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Announcements.api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class AnnouncementsController : ControllerBase
     {
         private readonly IAnnouncementService _announcementService;
@@ -19,12 +16,15 @@ namespace Announcements.api.Controllers
         }
 
         [HttpPost]
-        [Route("[action]")]
         public async Task<ActionResult> PostAnnouncement(AnnouncementDto announcementDto)
         {
             if (announcementDto is null)
             {
                 return StatusCode(422, "Cannot create announcement");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
             }
             await _announcementService.CreateAnnouncementAsync(announcementDto);
 
@@ -32,24 +32,25 @@ namespace Announcements.api.Controllers
         }
 
         [HttpPut]
-        [Route("[action]")]
-        public async Task<ActionResult> EditAnnouncement(AnnouncementDto announcementDto)
+        [Route("{id}")]
+        public async Task<ActionResult> EditAnnouncement(long id, AnnouncementDto announcementDto)
         {
+            var announcementToEdit = await _announcementService.GetAnnouncementsDetailsAsync(id);
+            if (announcementToEdit is null)
+            {
+                return StatusCode(422, "Announcement not found");
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-            if (announcementDto is null)
-            {
-                return StatusCode(422, "Cannot edit announcement");
-            }
+            }           
 
-            await _announcementService.EditAnnouncementAsync(announcementDto);
-            return Ok(announcementDto);
+            var updatedAnnouncement = await _announcementService.EditAnnouncementAsync(id, announcementDto);
+            return Ok(updatedAnnouncement);
         }
 
         [HttpDelete]
-        [Route("[action]/{id}")]
+        [Route("{id}")]
         public async Task<ActionResult> DeleteAnnouncement(long id)
         {
             var foundAnnouncement = await _announcementService.GetAnnouncementsDetailsAsync(id);
@@ -63,7 +64,7 @@ namespace Announcements.api.Controllers
         }
 
         [HttpGet]
-        [Route("[action]/all")]
+        [Route("all")]
         public async Task<ActionResult> GetAllAnnouncement()
         {
             var announcements = await _announcementService.GetAllAnnouncementsAsync();
@@ -75,7 +76,7 @@ namespace Announcements.api.Controllers
         }
 
         [HttpGet]
-        [Route("[action]/{id}")]
+        [Route("{id}")]
         public async Task<ActionResult> GetAnnouncementDetails(long id)
         {
             var announcement = await _announcementService.GetAnnouncementsDetailsAsync(id);

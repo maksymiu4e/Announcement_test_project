@@ -5,8 +5,6 @@ using Announcements.data.Repositories.Interfaces;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Announcements.business.Services
@@ -15,21 +13,21 @@ namespace Announcements.business.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+
         public AnnouncementService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
         public async Task<AnnouncementDto> CreateAnnouncementAsync(AnnouncementDto announcementDto)
         {
             var announcement = _mapper.Map<Announcement>(announcementDto);
-            if (announcement.Name != null)
-            {
-                await _unitOfWork.AnnouncementRepository.AddAsync(announcement);
-                await _unitOfWork.SaveAsync();
-                return announcementDto;
-            }
-            return null; ////////////?
+
+            await _unitOfWork.AnnouncementRepository.AddAsync(announcement);
+            await _unitOfWork.SaveAsync();
+
+            return announcementDto;
         }
 
         public async Task<bool> DeleteAnnouncementAsync(long id)
@@ -37,16 +35,26 @@ namespace Announcements.business.Services
             return await _unitOfWork.AnnouncementRepository.DeleteAsync(id);
         }
 
-        public async Task EditAnnouncementAsync(AnnouncementDto announcementDto)
+        public async Task<Announcement> EditAnnouncementAsync(long id, AnnouncementDto announcementDto)
         {
-            await _unitOfWork.AnnouncementRepository.EditAsync(_mapper.Map<Announcement>(announcementDto));
+            var announcementToEdit = await _unitOfWork.AnnouncementRepository.GetDetailsAsync(id);
+            if (announcementToEdit != null)
+            {
+                announcementToEdit.Name = announcementDto.Name;
+                announcementToEdit.Description = announcementDto.Description;
+                announcementToEdit.CreationDate = announcementDto.CreationDate;
+
+                await _unitOfWork.SaveAsync();
+                return announcementToEdit;
+            }
+
+            throw new ArgumentNullException();
         }
 
         public async Task<IEnumerable<AnnouncementDto>> GetAllAnnouncementsAsync()
         {
             var announcements = await _unitOfWork.AnnouncementRepository.GetAllAsync();
-            return _mapper.Map<IList<AnnouncementDto>>(announcements);
-            
+            return _mapper.Map<IList<AnnouncementDto>>(announcements);                       
         }
 
         public async Task<AnnouncementDto> GetAnnouncementsDetailsAsync(long id)

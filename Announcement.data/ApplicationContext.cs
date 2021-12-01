@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Announcements.data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Announcements.data.Configurations;
-using Announcements.data.Initialization;
 
 namespace Announcements.data
 {
